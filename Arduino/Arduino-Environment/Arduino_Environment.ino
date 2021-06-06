@@ -11,7 +11,7 @@ bool h12Flag;
 bool pmFlag;
 
 // Initialize Light Sensor:
-int lightInput = A1;
+int lightInput = A2;
 int lightStatus = 0; // variable for reading the pin status
 String lightLabel = "Photoresistor";
 
@@ -34,8 +34,8 @@ DHT dht = DHT(DHTPIN, DHTTYPE);
 #include <MHZ19.h>
 #include <SoftwareSerial.h>
 
-int MHZ_TX_PIN = 5;  // TX Pin von MH-Z19C Digital pins --> Green
-int MHZ_RX_PIN = 6;  // RX Pin von MH-Z19C Digital pins --> Blue
+int MHZ_TX_PIN = 10;  // TX Pin von MH-Z19C Digital pins --> Green
+int MHZ_RX_PIN = 11;  // RX Pin von MH-Z19C Digital pins --> Blue
 String co2Label = "CO2";
 
 // Objekt for the Sensor
@@ -47,16 +47,14 @@ const int dry = 595; // value for dry sensor
 const int wet = 239; // value for wet sensor
 String moistureLabe1 = "Soil Moisture";
 
-// Sound Sensor
-const int soundInput = A3;
-int soundValue = 0;
-String soundLabe1 = "Noise";
+
 
 bool label = true;
 void setup() {
   // Begin serial communication at a baud rate of 9600:
   Serial.begin(9600);
   delay(3000);
+
   // Setup DS3231 Time Module
  if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
@@ -85,10 +83,9 @@ void setup() {
    
 }
 void loop() {
+
     while(label){
     Serial.print(timeLabel);
-    Serial.print("\t");
-    Serial.print(soundLabe1);
     Serial.print("\t");
     Serial.print(lightLabel);
     Serial.print("\t");
@@ -109,6 +106,7 @@ void loop() {
  // Wait a few seconds between measurements:
   delay(10000);
 
+
  // Read Time
    DateTime now = rtc.now();
     Serial.println("\n");
@@ -127,16 +125,11 @@ void loop() {
     Serial.print(now.second(), DEC);
     Serial.print("\t");
 
-
-soundValue = analogRead(soundInput);   
-Serial.print(soundValue);
-Serial.print("\t");
-
  // Read light status
  lightStatus = analogRead(lightInput);
  Serial.print(lightStatus); 
  Serial.print("\t");
- 
+
   // Read the humidity in %:
   float humidityValue = dht.readHumidity();
   // Read the temperature as Celsius:
@@ -162,9 +155,10 @@ Serial.print("\t");
   Serial.print("\t");
 
   // Soil Moisture
-   int sensorVal = analogRead(A0);
+   int sensorVal = analogRead(A3);
    int percentageHumididy = map(sensorVal, wet, dry, 100, 0); 
    Serial.print(percentageHumididy);
    Serial.print("%");
+  
  
 }
