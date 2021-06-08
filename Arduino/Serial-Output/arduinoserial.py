@@ -7,22 +7,25 @@ import numpy as np
 import pandas as pd
 import subprocess
 import time
-import pyautogui
+#import pyautogui
+import pydirectinput
 
 spike_recorder_path = "C:\Program Files (x86)/Backyard Brains/Spike Recorder/SpikeRecorder.exe"
+arduino_port = "COM5"
+baud = 9600
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
 
 
 def start_spikerbox():
     subprocess.Popen(spike_recorder_path)
-    time.sleep(3)
-    pyautogui.click(752, 271, duration=0.25)
-    pyautogui.click(1273, 271, duration=0.25)
+    time.sleep(5)
+    pydirectinput.click(752, 271, duration=0.25)
+    pydirectinput.click(1273, 272, duration=0.25)
 
 
 def stop_spikerbox():
-    pyautogui.click(1325, 302)
+    pydirectinput.click(1325, 302)
 
 
 def decibel_recording(decibel_array):
@@ -54,32 +57,31 @@ def serial_recording(file_name, serial_port):
 
 
 def main():
-    start_spikerbox()
-    time.sleep(10)
-    stop_spikerbox()
-    '''global sample_number
+    global record_time
 
     while True:
         try:
-            sample_number = int(input("Sample number to collect: "))
+            record_time = int(input("Add a record time in minutes (integers only): "))
             break
         except ValueError:
             print("Please input integer only...")
             continue
+
     decibel_array = np.array(["Time", "Decibel"])
-    arduino_port = "COM5"
-    baud = 9600
+
     file_name = input("File name: ")
-    line = 0
+    start_spikerbox()
     serial_port = serial.Serial(arduino_port, baud)
-    while line <= sample_number:
+    record_time = record_time * 60
+    time_end = time.time() + record_time
+    while time.time() < time_end:
         serial_recording(file_name, serial_port)
         decibel_array = decibel_recording(decibel_array)
-        line = line + 1
 
     pd.DataFrame(decibel_array).to_csv(file_name + "_decibel.csv", index=False)
+    stop_spikerbox()
     print("Data collection complete!")
-    '''
+
 
 if __name__ == '__main__':
     main()
