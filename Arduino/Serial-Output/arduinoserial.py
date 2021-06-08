@@ -5,9 +5,24 @@ import math
 from datetime import datetime
 import numpy as np
 import pandas as pd
+import subprocess
+import time
+import pyautogui
 
+spike_recorder_path = "C:\Program Files (x86)/Backyard Brains/Spike Recorder/SpikeRecorder.exe"
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
+
+
+def start_spikerbox():
+    subprocess.Popen(spike_recorder_path)
+    time.sleep(3)
+    pyautogui.click(752, 271, duration=0.25)
+    pyautogui.click(1273, 271, duration=0.25)
+
+
+def stop_spikerbox():
+    pyautogui.click(1325, 302)
 
 
 def decibel_recording(decibel_array):
@@ -39,7 +54,11 @@ def serial_recording(file_name, serial_port):
 
 
 def main():
-    global sample_number
+    start_spikerbox()
+    time.sleep(10)
+    stop_spikerbox()
+    '''global sample_number
+
     while True:
         try:
             sample_number = int(input("Sample number to collect: "))
@@ -60,7 +79,7 @@ def main():
 
     pd.DataFrame(decibel_array).to_csv(file_name + "_decibel.csv", index=False)
     print("Data collection complete!")
-
+    '''
 
 if __name__ == '__main__':
     main()
