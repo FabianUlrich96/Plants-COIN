@@ -70,13 +70,28 @@ def main():
     decibel_array = np.array(["Time", "Decibel"])
 
     file_name = input("File name: ")
+    attempt_counter = 0
+    attempt_max = 5
+
+    while attempt_counter < attempt_max:
+        try:
+            serial_port = serial.Serial(arduino_port, baud)
+            break
+        except serial.SerialException:
+            print('Serial port occupied, trying again...')
+            attempt_counter += 1
+            if attempt_counter == attempt_max:
+                print('Terminating')
+                exit()
+            continue
     start_spikerbox()
-    serial_port = serial.Serial(arduino_port, baud)
     record_time = record_time * 60
     time_end = time.time() + record_time
     while time.time() < time_end:
         serial_recording(file_name, serial_port)
         decibel_array = decibel_recording(decibel_array)
+        print(decibel_array)
+
 
     pd.DataFrame(decibel_array).to_csv(file_name + "_decibel.csv", index=False)
     stop_spikerbox()

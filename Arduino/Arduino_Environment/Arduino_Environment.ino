@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include "RTClib.h"
 RTC_DS3231 rtc;
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+//char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 String timeLabel = "Time";
 
 
@@ -22,8 +22,8 @@ String lightLabel = "Photoresistor";
 // Set DHT pin:
 #define DHTPIN 2
 
-String humidityLabel = "Humidity";
-String temperatureLabel = "Temperature";
+String humidityLabel = "Humidity in %";
+String temperatureLabel = "Temperature in C°";
 // Set DHT type, uncomment whatever type you're using!
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 // Initialize DHT sensor for normal 16mhz Arduino:
@@ -36,7 +36,7 @@ DHT dht = DHT(DHTPIN, DHTTYPE);
 
 int MHZ_TX_PIN = 10;  // TX Pin von MH-Z19C Digital pins --> Green
 int MHZ_RX_PIN = 11;  // RX Pin von MH-Z19C Digital pins --> Blue
-String co2Label = "CO2";
+String co2Label = "CO2 in ppm";
 
 // Objekt for the Sensor
 MHZ19 co2Sensor;
@@ -45,7 +45,7 @@ SoftwareSerial co2Serial(MHZ_TX_PIN, MHZ_RX_PIN);
 // Soil Moisture Sensor
 const int dry = 595; // value for dry sensor
 const int wet = 239; // value for wet sensor
-String moistureLabe1 = "Soil Moisture";
+String moistureLabe1 = "Soil Moisture in %";
 
 
 
@@ -86,17 +86,17 @@ void loop() {
 
     while(label){
     Serial.print(timeLabel);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(lightLabel);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(humidityLabel);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(temperatureLabel);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(co2Label);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(moistureLabe1);
-    
+    Serial.print('\n');
     
 
 
@@ -104,31 +104,31 @@ void loop() {
   }
 
  // Wait a few seconds between measurements:
-  delay(10000);
+  delay(1000);
 
 
  // Read Time
    DateTime now = rtc.now();
-    Serial.println("\n");
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
+    //Serial.println("\n");
+    //Serial.print(now.year(), DEC);
+    //Serial.print('/');
+    //Serial.print(now.month(), DEC);
+    //Serial.print('/');
+    //Serial.print(now.day(), DEC);
+    //Serial.print(" (");
+    //Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    //Serial.print(") ");
     Serial.print(now.hour(), DEC);
     Serial.print(':');
     Serial.print(now.minute(), DEC);
     Serial.print(':');
     Serial.print(now.second(), DEC);
-    Serial.print("\t");
+    Serial.print(",");
 
  // Read light status
  lightStatus = analogRead(lightInput);
  Serial.print(lightStatus); 
- Serial.print("\t");
+ Serial.print(",");
 
   // Read the humidity in %:
   float humidityValue = dht.readHumidity();
@@ -142,23 +142,20 @@ void loop() {
   }
 
   Serial.print(humidityValue);
-  Serial.print(" % ");
-  Serial.print("\t");
+  Serial.print(",");
   Serial.print(temperatureValue);
-  Serial.print(" \xC2\xB0");
-  Serial.print("C");
-  Serial.print("\t");
+  Serial.print(",");
 
   //Check CO2 in ppm
   int co2Content = co2Sensor.getCO2();
   Serial.print(co2Content);
-  Serial.print("\t");
+  Serial.print(",");
 
   // Soil Moisture
    int sensorVal = analogRead(A3);
    int percentageHumididy = map(sensorVal, wet, dry, 100, 0); 
    Serial.print(percentageHumididy);
-   Serial.print("%");
+   Serial.print('\n');
   
  
 }
