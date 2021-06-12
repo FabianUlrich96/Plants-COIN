@@ -15,13 +15,20 @@ arduino_port = "COM5"
 baud = 9600
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
+width, height = pydirectinput.size()
 
+print(height)
+print(width)
 
 def start_spikerbox():
     subprocess.Popen(spike_recorder_path)
     time.sleep(5)
-    pydirectinput.click(752, 271, duration=0.25)
-    pydirectinput.click(1273, 272, duration=0.25)
+    connect_button_x = int(752/1920*width)
+    connect_button_y = int(271/1080*height)
+    record_button_x = int(1273/1920*width)
+    record_button_y = int(272/1080*height)
+    pydirectinput.click(connect_button_x, connect_button_y, duration=0.25)
+    pydirectinput.click(record_button_x, record_button_y, duration=0.25)
 
 
 def stop_spikerbox():
