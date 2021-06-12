@@ -1,4 +1,0 @@
-name: plants_environment
-channels:
-  - defaults
-prefix: D:\Programs\Conda\envs\plants_environment

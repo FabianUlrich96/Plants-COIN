@@ -11,30 +11,31 @@ import pyautogui
 import pydirectinput
 
 spike_recorder_path = "C:\Program Files (x86)/Backyard Brains/Spike Recorder/SpikeRecorder.exe"
-arduino_port = "COM5"
+arduino_port = "COM6"
 baud = 9600
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
-width, height = pydirectinput.size()
+connect_button_x = 200
+connect_button_y = 58
+record_button_x = 1193
+record_button_y = 58
+cancle_record_button_x = 1241
+cancle_record_button_y = 88
 
-print(height)
-print(width)
+print(connect_button_x)
 
 def start_spikerbox():
     subprocess.Popen(spike_recorder_path)
     time.sleep(2)
     pyautogui.hotkey('winleft', 'up')
     time.sleep(5)
-    connect_button_x = int(191/1920*width)
-    connect_button_y = int(56/1080*height)
-    record_button_x = int(1828/1920*width)
-    record_button_y = int(57/1080*height)
+    
     pydirectinput.click(connect_button_x, connect_button_y, duration=0.25)
     pydirectinput.click(record_button_x, record_button_y, duration=0.25)
 
 
 def stop_spikerbox():
-    pydirectinput.click(1880/1920*width, 87/1080*height)
+    pydirectinput.click(cancle_record_button_x, cancle_record_button_y)
 
 
 def decibel_recording(decibel_array):
