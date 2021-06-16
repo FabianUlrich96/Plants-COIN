@@ -1,7 +1,7 @@
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
 
-samplerate, data = wavfile.read('wav_test.wav')
+samplerate, data = wavfile.read('BYB_Recording_2021-06-13_14.59.03.wav')
 
 print(samplerate)
 print(data)
