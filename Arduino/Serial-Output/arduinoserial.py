@@ -61,7 +61,12 @@ def serial_recording(file_name, serial_port):
     getdata = serial_port.readline()
     data = getdata.decode('utf-8')
     print(data)
-    file = open(serial_file, "a")
+    try:
+        file = open(serial_file, "a")
+    
+    except PermissionError:
+        print("Cannot read csv, trying again...")
+        
     file.write(data + "\n")
     file.close()
 
