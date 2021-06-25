@@ -2,6 +2,7 @@ from scipy.io import wavfile
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import numpy as np
+import pandas as pd
 import datetime
 import glob
 
@@ -37,10 +38,11 @@ def select_file():
             user_input = user_input + "/" + input("Choose a File:")
 
     decibel_file = user_input[:-4] + "_decibel.csv"
+    sensor_file = user_input[:-4] + ".csv"
     wav_file = "." + user_input
     start_time = (user_input[-12:-4])
     start_time = start_time.replace(".", ":")
-    return wav_file, decibel_file, start_time
+    return wav_file, decibel_file, sensor_file, start_time
 
 
 def transform_data(data, samplerate):
@@ -75,29 +77,81 @@ def create_labels(length, start_time):
     return time_labels
 
 
-def my_print(decibel_file, data, time):
-    txt = input("Enter a graph name:")
+def select_values():
+    values = ["Decibel", "Photoresistor", "Humidity", "Temperature", "CO2", "Soil_Moisture", "Nothing"]
+    value1 = None
+    while value1 not in values:
+        print("Please enter a first value from the list: ")
+        print(values)
+        value1 = input("Input:")
+
+    value2 = None
+    while value2 not in values:
+        print("Please enter a second value from the list: ")
+        print(values)
+        value2 = input("Input:")
+
+    print("Thank you!")
+
+    return value1, value2
+
+
+def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time):
+    fig, host = plt.subplots(figsize=(8, 5))  # (width, height) in inches
+
     i = 0
     x = np.array([])
     while i < len(data):
         x = np.append(x, [i])
         i = i + 1
 
-    print(x)
-    plt.figure(txt)
-    plt.title(txt)
-    plt.xticks(x, time, rotation='vertical')
-    plt.plot(data)
-    ax1 = plt.gca()
-    temp = ax1.xaxis.get_ticklabels()
+    par1 = host.twinx()
+    par2 = host.twinx()
+
+    txt = input("Enter a graph name:")
+    host.set_title(txt)
+    host.set_xticks(x, minor=False)
+    host.set_xticklabels(time, fontdict=None, minor=False, rotation=90)
+
+    temp = host.get_xticklabels()
     temp = list(set(temp) - set(temp[::4]))
     for label in temp:
         label.set_visible(False)
+    color1 = colors.cnames['green']
+    color2 = colors.cnames['red']
+    color3 = colors.cnames['yellow']
+    host.set_xlabel("Time")
 
-    color = colors.cnames['green']
+    host.set_ylabel("Amplitude", color=color1)
 
-    plt.ylabel("Amplitude")
-    plt.xlabel("Time")
+    if value1 == "Decibel":
+        file1 = decibel_file
+    else:
+        file1 = sensor_file
+
+    if value2 == "Decibel":
+        file2 = decibel_file
+    else:
+        file2 = sensor_file
+
+    par2.spines['right'].set_position(('outward', 60))
+    p1, = host.plot(data, color=color1)
+    if value1 == "Nothing":
+
+        pass
+    else:
+        par1.set_ylabel(value1, color=color2)
+        p2, = par1.plot(file1[value1], color=color2)
+    if value2 == "Nothing":
+        pass
+    else:
+        p3, = par2.plot(file2[value2], color=color3)
+        par2.set_ylabel(value2, color=color3)
+
+    plt.show()
+
+
+def my_print(data):
     # maximalwert
     print('Maximum:', np.amax(data))
     # minimalwert
@@ -108,36 +162,17 @@ def my_print(decibel_file, data, time):
     print('Median:', np.median(data))
     # durchschnittlicher wert
     print('Durchschnitt:', np.mean(data))
-    # print(numpy.average(data))
-    # limit x
-    # plt.xlim(0, 10000)
-    while len(decibel_file) is not len(data):
-        decibel_file = np.insert(decibel_file, 1, 0, axis=0)
-    ax2 = ax1.twinx()
-    ax2.plot(decibel_file, color=color)
-    ax2.set_ylabel("dB", color=color)
-
-    plt.show()
-
-
-# myprint(samplerate, data, plant+"_no_sound")
-# myprint(sampleratet1, datat1, plant+"_traffic1")
-# myprint(sampleratet2, datat2, plant+"_traffic2")
-# myprint(sampleratet3, datat3, plant+"_traffic3")
-# myprint(sampleratec1, datac1, plant+"_con1")
-# myprint(sampleratec2, datac2, plant+"_con2")
-# myprint(sampleratec3, datac3, plant+"_con3")
 
 
 def main():
-    wav_file, decibel_file, start_time = select_file()
+    value1, value2 = select_values()
+    wav_file, decibel_file, sensor_file, start_time = select_file()
     samplerate, data = wavfile.read(wav_file)
-    decibel_file = np.genfromtxt('.' + decibel_file, delimiter=',', skip_header=1)
-    print("Länge:")
-    print(len(decibel_file))
+    decibel_file = pd.read_csv('.' + decibel_file)
+    sensor_file = pd.read_csv('.' + sensor_file)
     transformed_data, length = transform_data(data, samplerate)
     time_labels = create_labels(length, start_time)
-    my_print(decibel_file, transformed_data, time_labels)
+    plot_line_chart(value1, value2, decibel_file, sensor_file, transformed_data, time_labels)
 
 
 if __name__ == '__main__':
