@@ -150,6 +150,8 @@ def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time):
 
     plt.show()
 
+    return txt
+
 
 def my_print(data):
     # maximalwert
@@ -164,6 +166,29 @@ def my_print(data):
     print('Durchschnitt:', np.mean(data))
 
 
+def fft_function(data, sample_rate, title):
+    # https://pythontic.com/visualization/signals/fouriertransform_fft
+    # fast furiour transform is an implementation of discrete fourier transform,
+    # which converts a finite sequence into a same-length discrete time fourier transform, which is a function of frequency
+    fft = np.fft.fft(data) / len(data)  # Normalize amplitude
+
+    fft = fft[range(int(len(data) / 2))]  # Exclude sampling frequency
+    length = len(data)
+    values = np.arange(int(length / 2))
+    time_period = length/sample_rate
+    frequencies = values/time_period
+    # https://www.fluke.com/en/learn/blog/electrical/what-is-frequency
+    # Frequency is the rate at which current changes direction per second. It is measured in hertz (Hz)
+    plt.plot(frequencies, abs(fft))
+    plt.title(title + "Frequency(Hz)")
+    plt.xlim(right=10)
+    plt.xlim(left=0)
+    plt.xlabel("Frequency")
+    plt.ylabel("Amplitude")
+
+    plt.show()
+
+
 def main():
     value1, value2 = select_values()
     wav_file, decibel_file, sensor_file, start_time = select_file()
@@ -172,7 +197,9 @@ def main():
     sensor_file = pd.read_csv('.' + sensor_file)
     transformed_data, length = transform_data(data, samplerate)
     time_labels = create_labels(length, start_time)
-    plot_line_chart(value1, value2, decibel_file, sensor_file, transformed_data, time_labels)
+    title = plot_line_chart(value1, value2, decibel_file, sensor_file, transformed_data, time_labels)
+
+    fft_function(data, samplerate, title)
 
 
 if __name__ == '__main__':
