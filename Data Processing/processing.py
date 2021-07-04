@@ -119,7 +119,7 @@ def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time):
         label.set_visible(False)
     color1 = colors.cnames['green']
     color2 = colors.cnames['red']
-    color3 = colors.cnames['yellow']
+    color3 = colors.cnames['orange']
     host.set_xlabel("Time")
 
     host.set_ylabel("Amplitude", color=color1)
