@@ -9,9 +9,11 @@ import subprocess
 import time
 import pyautogui
 import pydirectinput
+import os
 
 spike_recorder_path = "C:\Program Files (x86)/Backyard Brains/Spike Recorder/SpikeRecorder.exe"
 arduino_port = "COM6"
+audio_file = "street.mp3"
 baud = 9600
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
@@ -24,12 +26,13 @@ cancle_record_button_y = 88
 
 print(connect_button_x)
 
+
 def start_spikerbox():
     subprocess.Popen(spike_recorder_path)
     time.sleep(2)
     pyautogui.hotkey('winleft', 'up')
     time.sleep(5)
-    
+
     pydirectinput.click(connect_button_x, connect_button_y, duration=0.25)
     pydirectinput.click(record_button_x, record_button_y, duration=0.25)
 
@@ -63,10 +66,10 @@ def serial_recording(file_name, serial_port):
     print(data)
     try:
         file = open(serial_file, "a")
-    
+
     except PermissionError:
         print("Cannot read csv, trying again...")
-        
+
     file.write(data + "\n")
     file.close()
 
@@ -99,14 +102,14 @@ def main():
                 print('Terminating')
                 exit()
             continue
-    start_spikerbox()
+    # start_spikerbox()
     record_time = record_time * 60
     time_end = time.time() + record_time
+    os.system('start ' + audio_file)
     while time.time() < time_end:
         serial_recording(file_name, serial_port)
         decibel_array = decibel_recording(decibel_array)
         print(decibel_array)
-
 
     pd.DataFrame(decibel_array).to_csv(file_name + "_decibel.csv", index=False)
     stop_spikerbox()
