@@ -12,8 +12,8 @@ import pydirectinput
 import os
 
 spike_recorder_path = "C:\Program Files (x86)/Backyard Brains/Spike Recorder/SpikeRecorder.exe"
-arduino_port = "COM6"
-audio_file = "street.mp3"
+arduino_port = "COM3"
+audio_file = "construction.mp3"
 baud = 9600
 SAMPLING_RATE = 22050
 NUM_SAMPLES = 2048
@@ -21,8 +21,8 @@ connect_button_x = 200
 connect_button_y = 58
 record_button_x = 1193
 record_button_y = 58
-cancle_record_button_x = 1241
-cancle_record_button_y = 88
+cancle_record_button_x = 2655
+cancle_record_button_y = 177
 
 print(connect_button_x)
 
