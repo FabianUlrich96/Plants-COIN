@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import datetime
 import glob
+import librosa
+import librosa.display
 
 
 # samplerate, data = wavfile.read("./Data/Big-Mimosa/bm_no_sound.wav")
@@ -187,7 +189,16 @@ def fft_function(data, sample_rate, title):
     plt.ylabel("Amplitude")
 
     plt.show()
-
+    
+def melplot(path):
+    data, sample_rate = librosa.load(path)
+    T = librosa.feature.melspectrogram(data, sr=sample_rate)
+    Tconv = librosa.power_to_db(T)
+    plt.figure(figsize=(14, 5))
+    librosa.display.specshow(Tconv, sr=sample_rate, x_axis='time', y_axis='hz')
+    plt.title("MFCC"+path)
+    plt.colorbar()
+    plt.show()
 
 def main():
     value1, value2 = select_values()
@@ -200,6 +211,7 @@ def main():
     title = plot_line_chart(value1, value2, decibel_file, sensor_file, transformed_data, time_labels)
 
     fft_function(data, samplerate, title)
+    melplot(wav_file)
 
 
 if __name__ == '__main__':
