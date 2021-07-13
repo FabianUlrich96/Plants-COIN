@@ -7,7 +7,7 @@ import datetime
 import glob
 import librosa
 import librosa.display
-
+from scipy import signal
 
 # samplerate, data = wavfile.read("./Data/Big-Mimosa/bm_no_sound.wav")
 # plant = "Mini-Mimosa"
@@ -64,6 +64,17 @@ def transform_data(data, samplerate):
 
     return transformed_data, length
 
+def butter_function(data, samplerate):
+    nyq = 0.5 * samplerate
+    low_cut = 0
+    high_cut = 20
+    low = low_cut / nyq
+    high = high_cut / nyq
+
+    b, a = signal.butter(20, 0.1, 'low')
+    filteredData = signal.filtfilt(b, a, data)  # data is the signal to be filtered
+
+    return filteredData
 
 def create_labels(length, start_time):
     d = datetime.datetime.strptime(start_time, '%H:%M:%S').time()
@@ -207,8 +218,9 @@ def main():
     decibel_file = pd.read_csv('.' + decibel_file)
     sensor_file = pd.read_csv('.' + sensor_file)
     transformed_data, length = transform_data(data, samplerate)
+    filtered_signal = butter_function(transformed_data, samplerate)
     time_labels = create_labels(length, start_time)
-    title = plot_line_chart(value1, value2, decibel_file, sensor_file, transformed_data, time_labels)
+    title = plot_line_chart(value1, value2, decibel_file, sensor_file, filtered_signal, time_labels)
 
     fft_function(data, samplerate, title)
     melplot(wav_file)
