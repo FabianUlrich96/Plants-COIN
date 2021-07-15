@@ -74,7 +74,7 @@ def plot_line_chart(decibel_file, data, title):
     par1.set_ylabel('Decibel', color=color2)
     p2, = par1.plot(decibel_file, color=color2)
     
-    plt.show()
+    plt.savefig(title[:-4]+'.jpg', format='jpg')
 
     return txt
 
