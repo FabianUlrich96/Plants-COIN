@@ -125,8 +125,8 @@ def melplot(path):
     plt.show()
 
 def main():
-    PATH = './Data3/' # Use your path
-    PATHDECIBEL = './Data-Split/Decibel/'
+    PATH = './DataAmp/' # Use your path
+    PATHDECIBEL = './DataDecibel/'
 
 ### Fetch all files in path
     fileNames = os.listdir(PATH)
