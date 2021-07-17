@@ -125,7 +125,7 @@ def melplot(path):
     plt.show()
 
 def main():
-    PATH = './Data3/' # Use your path
+    PATH = './Data-Split/' # Use your path
     PATHDECIBEL = './Data-Split/Decibel/'
 
 ### Fetch all files in path
@@ -142,7 +142,7 @@ def main():
         transformed_data, length = transform_data(data, samplerate)
         #filtered_signal = butter_function(transformed_data, samplerate)
         d = pd.read_csv(PATHDECIBEL + fileNamesDecibel[i])
-        #melplot(PATH + fileNames[i])
+        melplot(PATH + fileNames[i])
         title = plot_line_chart(d, transformed_data, fileNames[i])
         i+=1
 
