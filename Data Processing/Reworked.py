@@ -74,7 +74,7 @@ def plot_line_chart(decibel_file, data, title):
     par1.set_ylabel('Decibel', color=color2)
     p2, = par1.plot(decibel_file, color=color2)
     
-    plt.show()
+    plt.savefig(title[:-4]+'.jpg', format='jpg')
 
     return txt
 
@@ -125,8 +125,13 @@ def melplot(path):
     plt.show()
 
 def main():
+<<<<<<< HEAD
     PATH = './Data-Split/' # Use your path
     PATHDECIBEL = './Data-Split/Decibel/'
+=======
+    PATH = './DataAmp/' # Use your path
+    PATHDECIBEL = './DataDecibel/'
+>>>>>>> 060cf3e0d5b928001783990ccf268fb52d269238
 
 ### Fetch all files in path
     fileNames = os.listdir(PATH)
