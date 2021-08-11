@@ -105,11 +105,12 @@ def select_values():
         value2 = input("Input:")
 
     print("Thank you!")
+    label = input("Use Datetime labels; enter true or false")
 
-    return value1, value2
+    return value1, value2, label
 
 
-def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time):
+def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time, label):
     fig, host = plt.subplots(figsize=(8, 5))  # (width, height) in inches
 
     i = 0
@@ -124,16 +125,20 @@ def plot_line_chart(value1, value2, decibel_file, sensor_file, data, time):
     txt = input("Enter a graph name:")
     host.set_title(txt)
     host.set_xticks(x, minor=False)
-    host.set_xticklabels(time, fontdict=None, minor=False, rotation=90)
-
+    if label == "true":
+        host.set_xticklabels(time, fontdict=None, minor=False, rotation=90)
+    else: 
+        pass
+    
     temp = host.get_xticklabels()
-    temp = list(set(temp) - set(temp[::4]))
+    temp = list(set(temp) - set(temp[::60]))
     for label in temp:
         label.set_visible(False)
+    
     color1 = colors.cnames['green']
     color2 = colors.cnames['red']
     color3 = colors.cnames['orange']
-    host.set_xlabel("Time")
+    host.set_xlabel("Time (seconds)")
 
     host.set_ylabel("Amplitude", color=color1)
 
@@ -212,7 +217,7 @@ def melplot(path):
     plt.show()
 
 def main():
-    value1, value2 = select_values()
+    value1, value2, label = select_values()
     wav_file, decibel_file, sensor_file, start_time = select_file()
     samplerate, data = wavfile.read(wav_file)
     decibel_file = pd.read_csv('.' + decibel_file)
@@ -220,7 +225,7 @@ def main():
     transformed_data, length = transform_data(data, samplerate)
     filtered_signal = butter_function(transformed_data, samplerate)
     time_labels = create_labels(length, start_time)
-    title = plot_line_chart(value1, value2, decibel_file, sensor_file, filtered_signal, time_labels)
+    title = plot_line_chart(value1, value2, decibel_file, sensor_file, filtered_signal, time_labels, label)
 
     fft_function(data, samplerate, title)
     melplot(wav_file)
